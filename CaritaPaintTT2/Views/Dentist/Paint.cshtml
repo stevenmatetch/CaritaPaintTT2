@@ -1,0 +1,336 @@
+﻿@model CaritaPaintTT2.Models.DentistAddAttachementModel
+@{
+    @*@Layout = "null";*@
+    //ViewBag.Title = "Test";
+}
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "drawingForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <h1 style="margin-bottom:10px"><strong> Lägg till bild</strong></h1>
+
+    <input type="hidden" name="imageData" id="imageData" />
+
+    <div class="container scroll" style="height:90px">
+
+        <div class="row text-left" style="display:flex">
+
+            <div class="col2" style="margin-top:20px;">
+                <div id="red" onclick="changeColor(this)" class="color-filed" style="background-color:red;"> </div>
+                <div id="blue" onclick="changeColor(this)" class="color-filed" style="background-color: blue; margin-left:1px"> </div>
+                <div id="brush" onclick="changeColor(this)" class="color-filed" style="background-color: black;"> </div>
+                <a id="erase" style="margin-bottom:33px; border-radius:50%; height:40px; width:40px; margin-right:5px" class="btn btn-primary"> <span style="margin-top:4px" class="glyphicon glyphicon-erase"></span></a>
+                <a id="undoBtn" style="margin-bottom:33px;  border-radius: 50%; height: 40px; width: 40px; margin-right: 5px " class="btn btn-primary"><span style="margin-top:4px" class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a>
+                <a id="nextBtn" style="margin-bottom:33px;  border-radius: 50%; height: 40px; width: 40px; margin-right: 5px " class="btn btn-primary"> <span style="margin-top:4px" class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+                <a id="clearBtn" style="margin-bottom:33px;  border-radius: 50%; height: 40px; width: 40px; margin-right: 5px " class="btn btn-primary"> <span style="margin-top:5px" class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
+                <a href="/Dentist/Whiteboard" style="margin-bottom: 33px; height: 40px; font-weight: bold; border-radius: 16px; margin-right: 5px" class="btn btn-primary"><div style="margin-top:3px"> Rita på whiteboard</div></a>
+                @*@Html.ActionLink("Rita på bild", "Paint", htmlAttributes: new { @class = "btn btn-primary", @style = "border-radius:16px;background-color: white; color:#337ab7; margin-bottom:8px;font-weight:bold" })*@
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container scroll">
+        <div class="row text-center">
+            <div>
+                <div id="container" height="600" width="1000" style="box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important; margin-bottom:30px">
+                    <canvas id="myCanvas" height="400" width="1000" style="margin:0"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-horizontal">
+        <div class="panel-body" style="padding:10px">
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @rows = 5 } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.cTxtP, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.cTxtP, new { htmlAttributes = new { @class = "form-control", @rows = 5 } })
+                    @Html.ValidationMessageFor(model => model.cTxtP, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-1 col-md-10">
+                    <input type="submit" id="btnSave" value="Lägg till" style="max-width:280px;border-radius:16px;font-weight:bold" class="btn btn-success btn-block" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+}
+
+<style>
+
+    @@media(min-width:1000px) {
+        .primary {
+            width: 1000px
+        }
+    }
+
+    #primary_color {
+        border-radius: 50%;
+        height: 43px;
+        width: 43px;
+        border: none;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+        #primary_color::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        #primary_color::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+
+
+    .row {
+        margin-right: -22px;
+        margin-left: -15px;
+    }
+
+    .container scroll {
+        -ms-overflow-style: none;
+        IE and Edge
+    }
+
+    .scroll ::-webkit-scrollbar {
+        display: none;
+        Safari and Chrome
+    }
+
+    .scroll {
+        -ms-overflow-style: none;
+        Internet Explorer 10+ scrollbar-width: none;
+        Firefox;
+    }
+
+        .scroll > .row {
+            overflow-x: scroll;
+            white-space: nowrap;
+        }
+
+    .tools {
+        display: flex;
+        justify-content: center;
+    }
+
+    #container {
+        width: 100%;
+        height: 100%;
+        max-width: 1000px;
+        max-height: 400px;
+        margin-top: 1%;
+    }
+
+    #controlSize {
+        max-width: 200px;
+        align-self: center;
+
+    }
+
+    #colorpicker {
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        border: none;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    #myCanvas {
+        border-radius: 5px;
+        cursor: crosshair;
+        margin-bottom: 10%;
+    }
+
+    .color-filed {
+        min-height: 40px;
+        min-width: 40px;
+        cursor: pointer;
+        display: inline-block;
+        margin-right: 5px;
+        box-sizing: border-box;
+        border-radius: 50%;
+    }
+</style>
+
+<script>
+
+    $("#btnSave").click(function () {
+        var form = $("#drawingForm");
+        var image = document.getElementById("myCanvas").toDataURL("image/png");
+        image = image.replace('data:image/png;base64,', '');
+        $('#imageData').val(image);
+        form.submit();
+    });
+
+</script>
+
+<script>
+
+    var renderingElement = document.getElementById("myCanvas");
+
+    // create an offscreen canvas only for the drawings
+    let drawingElement = renderingElement.cloneNode();
+    let drawingCtx = drawingElement.getContext('2d');
+    let renderingCtx = renderingElement.getContext('2d');
+
+    let img = new Image();
+    let brushSize = 5;
+    let brushColor = "#000000"
+    let drawingMode = "brush";
+    let draw_color = "Black";
+    let draw_width = 2;
+    let is_drawing = false;
+    let restore_array = [];
+    let index = -1;
+    let lastX;
+    let lastY;
+    let moving = false;
+
+    img.src = "/Images/picture.png";
+    img.onload = () => {
+        renderingCtx.drawImage(img, 0, 0, 1000, 400);
+    }
+
+    let eraseButton = document.getElementById("erase");
+    let brushButton = document.getElementById("brush");
+
+    eraseButton.addEventListener("click", () => {
+        drawingMode = "erase";
+    })
+
+    brushButton.addEventListener("click", () => {
+        drawingMode = "brush";
+    })
+
+    renderingElement.addEventListener("mousedown", (ev) => {
+        moving = true;
+        lastX = ev.pageX - renderingElement.offsetLeft;
+        lastY = ev.pageY - renderingElement.offsetTop;
+    })
+
+    renderingElement.addEventListener("mouseup", (ev) => {
+        moving = false;
+        lastX = ev.pageX - renderingElement.offsetLeft;
+        lastY = ev.pageY - renderingElement.offsetTop;
+        restore_array.push(drawingCtx.getImageData(0, 0, 1000, 400))
+        index += 1;
+    })
+
+    renderingElement.addEventListener("mousemove", (ev) => {
+        if (moving) {
+
+            if (drawingMode === "brush") {
+                drawingCtx.globalCompositeOperation = "source-over";
+            }
+            else if (drawingMode === "erase") {
+                drawingCtx.globalCompositeOperation = "destination-out";
+            }
+            let currentX = ev.pageX - renderingElement.offsetLeft;
+            let currentY = ev.pageY - renderingElement.offsetTop;
+
+            drawingCtx.beginPath();
+            drawingCtx.lineJoin = "round";
+            drawingCtx.moveTo(lastX, lastY);
+            drawingCtx.lineTo(currentX, currentY);
+            drawingCtx.closePath();
+            drawingCtx.strokeStyle = brushColor;
+            drawingCtx.lineWidth = brushSize;
+            drawingCtx.stroke();
+            lastX = currentX;
+            lastY = currentY;
+
+            // draw to visible canvas
+            renderingCtx.clearRect(0, 0, 1000, 400);
+            renderingCtx.drawImage(img, 0, 0, 1000, 400);
+            renderingCtx.globalCompositeOperation = "source-atop";
+            renderingCtx.drawImage(drawingElement, 0, 0, 1000, 400);
+
+            // reset
+            renderingCtx.globalCompositeOperation = "source-over";
+        }
+    });
+
+ 
+
+    function undo_last() {
+
+        if (index <= 0) {
+            clear_canvas();
+        }
+        else if (index > 0) {
+            index -= 1;
+            // restore_array.pop();
+            drawingCtx.putImageData(restore_array[index], 0, 0)
+            // draw to visible canvas
+            renderingCtx.clearRect(0, 0, 1000, 400);
+            renderingCtx.drawImage(img, 0, 0, 1000, 400);
+            renderingCtx.globalCompositeOperation = "source-atop";
+            renderingCtx.drawImage(drawingElement, 0, 0, 1000, 400);
+            // reset
+            renderingCtx.globalCompositeOperation = "source-over";
+        }
+    }
+
+    function changeColor(element) {
+        drawingMode = "brush";
+        brushColor = element.style.backgroundColor;
+    }
+
+    function next() {
+        if (index < restore_array.length - 1) {
+            index += 1;
+            drawingCtx.putImageData(restore_array[index], 0, 0);
+
+            // draw to visible canvas
+            renderingCtx.clearRect(0, 0, 1000, 400);
+            renderingCtx.drawImage(img, 0, 0, 1000, 400);
+            renderingCtx.globalCompositeOperation = "source-atop";
+            renderingCtx.drawImage(drawingElement, 0, 0, 1000, 400);
+
+            // reset
+            renderingCtx.globalCompositeOperation = "source-over";
+        }
+    }
+
+    function clear_canvas() {
+        drawingCtx.drawImage(img, 0, 0, 1000, 400);
+        restore_array = [];
+        index = -1;
+        drawingMode = "brush";
+        brushColor = "black";
+
+        // draw to visible canvas
+        renderingCtx.clearRect(0, 0, 1000, 400);
+        renderingCtx.drawImage(img, 0, 0, 1000, 400);
+        renderingCtx.globalCompositeOperation = "source-atop";
+        renderingCtx.drawImage(drawingElement, 0, 0, 1000, 400);
+
+        // reset
+        renderingCtx.globalCompositeOperation = "source-over";
+    }
+
+    document.getElementById("nextBtn").addEventListener("click", next);
+    document.getElementById("undoBtn").addEventListener("click", undo_last);
+    document.getElementById("clearBtn").addEventListener("click", clear_canvas);
+</script>
