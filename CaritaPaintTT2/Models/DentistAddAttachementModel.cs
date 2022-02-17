@@ -8,7 +8,7 @@ namespace CaritaPaintTT2.Models
 {
     public class DentistAddAttachementModel
     {
-        public DentistOrdersModel.DentistOrder Order { get; set; }
+        //public DentistOrdersModel.DentistOrder Order { get; set; }
 
         [Required(ErrorMessage = "Fältet {0} är obligatoriskt.")]
         [Display(Name = "Filnamn")]
